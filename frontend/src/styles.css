@@ -1,0 +1,156 @@
+:root {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #f5f7fb;
+  background: radial-gradient(circle at top right, #1f3b57 0%, #0f1725 42%, #090d14 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  width: 100%;
+  height: 100%;
+}
+
+.sidebar {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  overflow-y: auto;
+  backdrop-filter: blur(8px);
+  background: rgba(7, 12, 18, 0.64);
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  font-size: 1.3rem;
+  letter-spacing: 0.02em;
+}
+
+h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.input,
+.button,
+.select {
+  width: 100%;
+  margin-top: 0.45rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 0.55rem 0.65rem;
+  color: #f5f7fb;
+  background: rgba(6, 11, 17, 0.8);
+}
+
+.button {
+  cursor: pointer;
+}
+
+.button.primary {
+  background: linear-gradient(120deg, #2fbc8f, #20826f);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+
+.track-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.track-item {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 0.65rem;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+}
+
+.track-item.active {
+  border-color: rgba(75, 206, 255, 0.9);
+  background: rgba(40, 92, 112, 0.35);
+}
+
+.track-title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.track-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.map-wrap {
+  position: relative;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+.controls {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  display: grid;
+  grid-template-columns: 100px 1fr 100px 130px;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.7rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(6, 10, 15, 0.76);
+  backdrop-filter: blur(8px);
+}
+
+.range {
+  width: 100%;
+}
+
+.status {
+  font-size: 0.8rem;
+  opacity: 0.82;
+  margin-top: 0.4rem;
+  min-height: 1.1rem;
+}
+
+@media (max-width: 960px) {
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-rows: 340px 1fr;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .controls {
+    grid-template-columns: 1fr 1fr;
+  }
+}
