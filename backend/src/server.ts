@@ -1,10 +1,16 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { basename, extname, resolve } from "node:path";
 import { nanoid } from "nanoid";
-import { getTrackById, insertTrack, listTracks, type StoredTrackRow } from "./db.js";
+import {
+  deleteTrackById,
+  getTrackById,
+  insertTrack,
+  listTracks,
+  type StoredTrackRow,
+} from "./db.js";
 import { parseGpx } from "./gpx.js";
 
 type TrackPayload = {
@@ -39,6 +45,7 @@ const toTrackPayload = (row: StoredTrackRow): TrackPayload => ({
 });
 
 const uploadsDir = resolve(process.cwd(), "data", "uploads");
+const diagnosticsLogPath = resolve(process.cwd(), "data", "diagnostics.log");
 mkdirSync(uploadsDir, { recursive: true });
 
 const app = Fastify({ logger: true });
@@ -51,6 +58,21 @@ await app.register(multipart, {
 });
 
 app.get("/health", async () => ({ ok: true }));
+
+app.post("/api/diagnostics", async (request, reply) => {
+  const body = request.body as Record<string, unknown> | undefined;
+  if (!body || typeof body !== "object") {
+    return reply.status(400).send({ error: "Invalid diagnostics payload" });
+  }
+
+  const row = {
+    ts: new Date().toISOString(),
+    ...body,
+  };
+
+  appendFileSync(diagnosticsLogPath, `${JSON.stringify(row)}\n`, "utf8");
+  return { ok: true };
+});
 
 app.get("/api/tracks", async () => {
   const rows = listTracks.all() as StoredTrackRow[];
@@ -72,6 +94,24 @@ app.get("/api/tracks/:id", async (request, reply) => {
     track: toTrackPayload(row),
     points: parsed.points,
   };
+});
+
+app.delete("/api/tracks/:id", async (request, reply) => {
+  const { id } = request.params as { id: string };
+  const row = getTrackById.get(id) as StoredTrackRow | undefined;
+
+  if (!row) {
+    return reply.status(404).send({ error: "Track not found" });
+  }
+
+  deleteTrackById.run(id);
+  try {
+    rmSync(row.file_path, { force: true });
+  } catch {
+    // Best-effort file cleanup; DB row is already removed.
+  }
+
+  return { ok: true, deletedId: id };
 });
 
 app.post("/api/tracks/upload", async (request, reply) => {

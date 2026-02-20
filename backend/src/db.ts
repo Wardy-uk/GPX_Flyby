@@ -55,3 +55,7 @@ export const listTracks = db.prepare(`
 export const getTrackById = db.prepare(`
   SELECT * FROM tracks WHERE id = ?
 `);
+
+export const deleteTrackById = db.prepare(`
+  DELETE FROM tracks WHERE id = ?
+`);

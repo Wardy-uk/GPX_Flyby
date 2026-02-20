@@ -31,6 +31,11 @@ export type TrackDetails = {
   points: TrackPoint[];
 };
 
+export type DiagnosticsPayload = {
+  event: string;
+  details?: Record<string, unknown>;
+};
+
 const apiBase =
   import.meta.env.VITE_API_BASE && String(import.meta.env.VITE_API_BASE).trim().length > 0
     ? String(import.meta.env.VITE_API_BASE).trim()
@@ -91,4 +96,19 @@ export const getTrackDetails = async (id: string): Promise<TrackDetails> => {
   const response = await fetch(`${apiBase}/api/tracks/${id}`);
   await ensureOk(response);
   return (await response.json()) as TrackDetails;
+};
+
+export const deleteTrack = async (id: string): Promise<void> => {
+  const response = await fetch(`${apiBase}/api/tracks/${id}`, {
+    method: "DELETE",
+  });
+  await ensureOk(response);
+};
+
+export const postDiagnostics = async (payload: DiagnosticsPayload): Promise<void> => {
+  await fetch(`${apiBase}/api/diagnostics`, {
+    method: "POST",
+    headers: jsonHeaders,
+    body: JSON.stringify(payload),
+  });
 };
